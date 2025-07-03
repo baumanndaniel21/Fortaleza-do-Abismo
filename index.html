@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive, monospace;
+            background-color: #111;
+            color: #00FF41;
+            text-align: center;
+            line-height: 1.5;
+            padding: 20px;
+            background-image: 
+                linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 4px solid #00FF41;
+            box-shadow: 0 0 10px #00FF41;
+            background: rgba(0, 0, 0, 0.8);
+            image-rendering: pixelated;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        #game {
+            display: none;
+        }
+        
+        button {
+            margin: 10px;
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #003B00;
+            color: #00FF41;
+            border: 2px solid #00FF41;
+            border-radius: 0;
+            font-family: 'Press Start 2P', cursive;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            image-rendering: pixelated;
+        }
+        
+        button:hover {
+            background-color: #006400;
+            text-shadow: 0 0 5px #00FF41;
+            box-shadow: 0 0 10px #00FF41;
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border: 2px solid #00FF41;
+            image-rendering: pixelated;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+        }
+        
+        h1 {
+            color: #00FF41;
+            text-shadow: 0 0 10px #00FF41;
+            font-size: 24px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+        
+        .stats {
+            background: rgba(0, 20, 0, 0.5);
+            padding: 15px;
+            border: 2px solid #00FF41;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 10px #003B00;
+            font-size: 14px;
+        }
+        
+        .scene {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px dashed #00FF41;
+        }
+        
+        #start-form {
+            margin-bottom: 20px;
+        }
+        
+        #playerName {
+            padding: 12px;
+            font-size: 14px;
+            border-radius: 0;
+            border: 2px solid #00FF41;
+            margin-right: 10px;
+            background: #003300;
+            color: #00FF41;
+            font-family: 'Press Start 2P', cursive;
+            width: 60%;
+            max-width: 300px;
+        }
+        
+        #start-form h2 {
+            text-shadow: 0 0 5px #00FF41;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+    </style>
+    <title>RPG - Fortaleza do Abismo</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Fortaleza do Abismo</h1>
+        <div id="start-form">
+            <h2>Escolha um nome para seu personagem:</h2>
+            <input type="text" id="playerName" placeholder="Nome do personagem" required>
+            <button id="startButton">Começar Jogo</button>
+        </div>
+        <div id="game"></div>
+        <button id="nextButton" class="hidden">Continuar</button>
+    </div>
+    <script>
+        let game = document.getElementById("game");
+        let nextButton = document.getElementById("nextButton");
+        let startForm = document.getElementById("start-form");
+        let startButton = document.getElementById("startButton");
+        let playerName = "";
+
+        function startGame() {
+            playerName = document.getElementById("playerName").value.trim();
+            if (!playerName) return;
+            
+            startForm.style.display = "none";
+            game.style.display = "block";
+            game.innerHTML += `
+                <div class="stats">
+                    <h3>${playerName}</h3>
+                    <p>Vida ❤️: 5/5</p>
+                    <p>Força ⚔️: 5</p>
+                    <p>Itens 🎒: Nenhum</p>
+                </div>
+                <div class="scene">
+                    ${playerName} acorda em uma cela úmida e escura...
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/95f58c13-d515-4107-b23c-6d48e519beec.png" alt="Cela escura e úmida">
+                </div>
+            `;
+            showOptions(["Saia da cela"], firstChallenge);
+        }
+
+        startButton.onclick = startGame;
+
+        function showOptions(options, callback) {
+            game.innerHTML += "<br>";
+            options.forEach(option => {
+                let button = document.createElement("button");
+                button.innerText = option;
+                button.onclick = () => {
+                    callback(option);
+                };
+                game.appendChild(button);
+            });
+            nextButton.classList.add("hidden");
+        }
+
+        function firstChallenge(option) {
+            if (option === "Saia da cela") {
+                game.innerHTML = "Você olha pela cela e encontra duas opções de fuga:<br>(1) Uma tranca enferrujada na porta🚪.<br>(2) Um buraco no chão🕳️.<br>";
+                showOptions(["Tranca", "Buraco"], secondChallenge);
+            }
+        }
+
+        function secondChallenge(option) {
+            if (option === "Tranca") {
+                game.innerHTML = "Você forçou a tranca, mas acordou o guarda. Game Over.";
+                nextButton.classList.remove("hidden");
+                nextButton.onclick = startGame;
+            } else if (option === "Buraco") {
+                game.innerHTML = "Você escolheu o buraco. Encontra três itens:<br>(1) Colher🥄.<br>(2) Pedaço do pé da cama🛏️.<br>(3) Lixa🏏.<br>";
+                showOptions(["Colher", "Pé da cama", "Lixa"], itemChoice);
+            }
+        }
+
+        function itemChoice(option) {
+            if (option === "Colher" || option === "Pé da cama") {
+                game.innerHTML = "Você escolheu um item que não serve para abrir a passagem. Tente de novo.";
+                nextButton.classList.remove("hidden");
+                nextButton.onclick = () => {
+                    firstChallenge("Saia da cela");
+                };
+            } else if (option === "Lixa") {
+                game.innerHTML = "Você alarga o buraco e acessa os corredores do térreo. Prepare-se para correr.<br>";
+                showOptions(["Lutar", "Esquivar"], secondDecision);
+            }
+        }
+
+        function secondDecision(option) {
+            if (option === "Lutar") {
+                game.innerHTML = "Você luta contra os guardas e é pego. Game Over.";
+                nextButton.classList.remove("hidden");
+                nextButton.onclick = startGame;
+            } else if (option === "Esquivar") {
+                game.innerHTML = "Você esquiva e um prisioneiro pede ajuda. O que você faz?<br>";
+                showOptions(["Ignorar", "Escutar"], prisonerDecision);
+            }
+        }
+
+        function prisonerDecision(option) {
+            if (option === "Ignorar") {
+                game.innerHTML = "Você ignora o prisioneiro e é pego. Game Over.";
+                nextButton.classList.remove("hidden");
+                nextButton.onclick = startGame;
+            } else if (option === "Escutar") {
+                game.innerHTML = "Você escuta o pedido e entrega a bolinha. O prisioneiro te dá uma chave🔑. Você avança.<br>";
+                nextButton.classList.remove("hidden");
+                nextButton.onclick = continueGame;
+            }
+        }
+
+        function continueGame() {
+            game.innerHTML = `
+                <div class="stats">
+                    <h3>${playerName}</h3>
+                    <p>Vida ❤️: 5/5</p>
+                    <p>Força ⚔️: 5</p>
+                    <p>Itens 🎒: Chave 🔑</p>
+                </div>
+                <div class="scene">
+                    Você passa da porta e anda um pequeno percurso por um corredor. Uma abertura escura é avistada no fim do corredor... 
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/070b3601-5ad0-40b9-b58a-3bebca4f6279.png" alt="Corredor escuro do esgoto">
+                </div>
+            `;
+            showOptions(["Direita", "Esquerda"], sewerPath);
+        }
+
+        function sewerPath(option) {
+            if (option === "Direita") {
+                game.innerHTML = "Você segue pela direita mas é arrastado para um abismo. Game Over.";
+                nextButton.classList.remove("hidden");
+                nextButton.onclick = startGame;
+            } else {
+                game.innerHTML = `
+                    Encontra pilhas e acende sua lanterna! Um rato gigante aparece...
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/07ee8e91-8b77-4982-ba78-ff8294005a09.png" alt="Rato gigante ameaçador">
+                `;
+                showOptions(["Lutar", "Correr"], ratEncounter);
+            }
+        }
+
+        function ratEncounter(option) {
+            if (option === "Lutar") {
+                game.innerHTML = "Você tenta lutar mas o rato é muito forte. Game Over.";
+                nextButton.classList.remove("hidden");
+                nextButton.onclick = startGame;
+            } else {
+                game.innerHTML = "Você encontra uma válvula e escapa!";
+                showOptions(["Girar esquerda", "Girar direita"], valveChoice);
+            }
+        }
+
+        function valveChoice(option) {
+            if (option === "Girar esquerda") {
+                game.innerHTML = "Você gira errado e é pego. Game Over.";
+                nextButton.classList.remove("hidden");
+                nextButton.onclick = startGame;
+            } else {
+                game.innerHTML = `
+                    Você escapa e chega à superfície! 
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/941c775a-fda9-4988-9baa-6fda5b3efdce.png" alt="Personagem livre">
+                    <h2>Parabéns ${playerName}! Você escapou!</h2>
+                `;
+                nextButton.classList.remove("hidden");
+                nextButton.innerText = "Jogar novamente";
+                nextButton.onclick = startGame;
+            }
+        }
+
+        nextButton.onclick = startGame;
+        startGame();
+    </script>
+</body>
+</html>
